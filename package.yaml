@@ -21,7 +21,16 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
-- polysemy
+- free
+- process
+- containers
+- simple-text-format
+- unordered-containers
+- text
+- temporary
+- directory
+- mtl
+- array
 
 library:
   source-dirs: src

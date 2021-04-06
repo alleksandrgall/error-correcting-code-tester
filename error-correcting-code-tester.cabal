@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 447d48d7296ec1210d281feb54be7edaa2394ebd74c6ff7a601c553429f7d9cc
+-- hash: 725e031ae474010a339ae75bfb2b55beaee7d1f083ab3e4024a6763646d8976c
 
 name:           error-correcting-code-tester
 version:        0.1.0.0
@@ -27,13 +27,32 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      Experiment.Experiment
+      Experiment.Types.Common.FormatString
+      Experiment.Types.Common.FormatString.FormatString
+      Experiment.Types.Common.HandlerLang.Handler
+      Experiment.Types.Common.HandlerLang.HandlerDef
+      Experiment.Types.Common.ParamsLang.Params
+      Experiment.Types.PrepareStrings.PrepareStrings
+      FaultHandling
+      FaultHandling.HandlerExceptions
+      FaultHandling.HandlerExceptions.HandlerExceptions
   other-modules:
       Paths_error_correcting_code_tester
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      array
+    , base >=4.7 && <5
+    , containers
+    , directory
+    , free
+    , mtl
+    , process
+    , simple-text-format
+    , temporary
+    , text
+    , unordered-containers
   default-language: Haskell2010
 
 executable error-correcting-code-tester-exe
@@ -42,10 +61,21 @@ executable error-correcting-code-tester-exe
       Paths_error_correcting_code_tester
   hs-source-dirs:
       app
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  default-extensions: DataKinds FlexibleContexts GADTs LambdaCase PolyKinds RankNTypes TypeApplications ScopedTypeVariables TypeOperators TypeFamilies
+  ghc-options: -O2 -flate-specialise -fspecialise-aggressively -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      array
+    , base >=4.7 && <5
+    , containers
+    , directory
     , error-correcting-code-tester
+    , free
+    , mtl
+    , process
+    , simple-text-format
+    , temporary
+    , text
+    , unordered-containers
   default-language: Haskell2010
 
 test-suite error-correcting-code-tester-test
@@ -57,6 +87,16 @@ test-suite error-correcting-code-tester-test
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      array
+    , base >=4.7 && <5
+    , containers
+    , directory
     , error-correcting-code-tester
+    , free
+    , mtl
+    , process
+    , simple-text-format
+    , temporary
+    , text
+    , unordered-containers
   default-language: Haskell2010
