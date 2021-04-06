@@ -1,0 +1,62 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 447d48d7296ec1210d281feb54be7edaa2394ebd74c6ff7a601c553429f7d9cc
+
+name:           error-correcting-code-tester
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/error-correcting-code-tester#readme>
+homepage:       https://github.com/githubuser/error-correcting-code-tester#readme
+bug-reports:    https://github.com/githubuser/error-correcting-code-tester/issues
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2021 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/error-correcting-code-tester
+
+library
+  exposed-modules:
+      Lib
+  other-modules:
+      Paths_error_correcting_code_tester
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+  default-language: Haskell2010
+
+executable error-correcting-code-tester-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_error_correcting_code_tester
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , error-correcting-code-tester
+  default-language: Haskell2010
+
+test-suite error-correcting-code-tester-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_error_correcting_code_tester
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , error-correcting-code-tester
+  default-language: Haskell2010

@@ -1,0 +1,63 @@
+name:                error-correcting-code-tester
+version:             0.1.0.0
+github:              "githubuser/error-correcting-code-tester"
+license:             BSD3
+author:              "Author name here"
+maintainer:          "example@example.com"
+copyright:           "2021 Author name here"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/githubuser/error-correcting-code-tester#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- polysemy
+
+library:
+  source-dirs: src
+
+executables:
+  error-correcting-code-tester-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -O2
+    - -flate-specialise
+    - -fspecialise-aggressively
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    default-extensions:
+    - DataKinds
+    - FlexibleContexts
+    - GADTs
+    - LambdaCase
+    - PolyKinds
+    - RankNTypes
+    - TypeApplications
+    - ScopedTypeVariables
+    - TypeOperators
+    - TypeFamilies
+    dependencies:
+    - error-correcting-code-tester
+
+tests:
+  error-correcting-code-tester-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - error-correcting-code-tester
