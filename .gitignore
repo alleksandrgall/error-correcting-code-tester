@@ -1,2 +1,15 @@
 .stack-work/
+.idea/
+
+src/Sandbox.hs
+
+# User-specific stuff:
+.idea/workspace.xml
+.idea/tasks.xml
+
+# Gradle:
+.idea/gradle.xml
+.idea/libraries
+
+
 *~
