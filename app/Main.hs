@@ -1,4 +1,6 @@
 module Main where
 
+import qualified Sandbox
+
 main :: IO ()
-main = undefined
+main = Sandbox.main

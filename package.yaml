@@ -25,6 +25,9 @@ dependencies:
   - text
   - random
   - hspec
+  - filepath
+  - directory
+  - time
 #- plot
 
 
@@ -34,6 +37,7 @@ library:
     - -O2
     - -flate-specialise
     - -fspecialise-aggressively
+
   default-extensions:
     - TemplateHaskell
     - DataKinds
@@ -81,6 +85,7 @@ tests:
       - -threaded
       - -rtsopts
       - -with-rtsopts=-N
+
     default-extensions:
       - DataKinds
       - FlexibleContexts

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 649c494cad3b0fd22f77a8f8d2ea89435fd473f609d1b783317715ea048ae1fe
+-- hash: 447483d2f9eaa2471e928a4b7a7a744faabfdbac366640f2bf0fb195618cd526
 
 name:           error-correcting-code-tester
 version:        0.1.0.0
@@ -27,8 +27,8 @@ source-repository head
 
 library
   exposed-modules:
+      Common.Logger
       Experiment
-      Internal.Experiment
       Sandbox
   other-modules:
       Paths_error_correcting_code_tester
@@ -38,10 +38,13 @@ library
   ghc-options: -O2 -flate-specialise -fspecialise-aggressively
   build-depends:
       base >=4.7 && <5
+    , directory
+    , filepath
     , hspec
     , polysemy
     , random
     , text
+    , time
   default-language: Haskell2010
 
 executable error-correcting-code-tester-exe
@@ -54,11 +57,14 @@ executable error-correcting-code-tester-exe
   ghc-options: -O2 -flate-specialise -fspecialise-aggressively -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , directory
     , error-correcting-code-tester
+    , filepath
     , hspec
     , polysemy
     , random
     , text
+    , time
   default-language: Haskell2010
 
 test-suite error-correcting-code-tester-test
@@ -72,9 +78,12 @@ test-suite error-correcting-code-tester-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , directory
     , error-correcting-code-tester
+    , filepath
     , hspec
     , polysemy
     , random
     , text
+    , time
   default-language: Haskell2010
