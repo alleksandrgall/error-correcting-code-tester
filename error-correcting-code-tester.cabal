@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 447483d2f9eaa2471e928a4b7a7a744faabfdbac366640f2bf0fb195618cd526
+-- hash: ca453a646026949de1dabc6b9058e0f799fa9963bfbc3fedbe0cfc5d3d6a3812
 
 name:           error-correcting-code-tester
 version:        0.1.0.0
@@ -28,6 +28,7 @@ source-repository head
 library
   exposed-modules:
       Common.Logger
+      ExecStartup
       Experiment
       Sandbox
   other-modules:
@@ -38,10 +39,15 @@ library
   ghc-options: -O2 -flate-specialise -fspecialise-aggressively
   build-depends:
       base >=4.7 && <5
+    , bytestring
+    , clock
+    , containers
     , directory
     , filepath
+    , formatting
     , hspec
     , polysemy
+    , process
     , random
     , text
     , time
@@ -57,11 +63,16 @@ executable error-correcting-code-tester-exe
   ghc-options: -O2 -flate-specialise -fspecialise-aggressively -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , bytestring
+    , clock
+    , containers
     , directory
     , error-correcting-code-tester
     , filepath
+    , formatting
     , hspec
     , polysemy
+    , process
     , random
     , text
     , time
@@ -78,11 +89,16 @@ test-suite error-correcting-code-tester-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , bytestring
+    , clock
+    , containers
     , directory
     , error-correcting-code-tester
     , filepath
+    , formatting
     , hspec
     , polysemy
+    , process
     , random
     , text
     , time

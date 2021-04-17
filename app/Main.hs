@@ -1,6 +1,9 @@
+{-# LANGUAGE OverloadedStrings #-}
 module Main where
 
 import qualified Sandbox
 
+
 main :: IO ()
-main = Sandbox.main
+main = do
+  undefined

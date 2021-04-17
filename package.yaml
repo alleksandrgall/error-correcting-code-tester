@@ -28,6 +28,11 @@ dependencies:
   - filepath
   - directory
   - time
+  - containers
+  - process
+  - bytestring
+  - clock
+  - formatting
 #- plot
 
 

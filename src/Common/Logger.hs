@@ -8,33 +8,31 @@ module Common.Logger
     runLoggerToFileUnsafeWithTime,
     runLoggerToFileUnsafe,
     runLoggerOutput,
-    logInfo, 
+    logInfo,
     logDebug,
     logError,
-    logWarning
+    logWarning,
   )
 where
 
+---Redact---
 import Data.Time.Clock (getCurrentTime)
 import Polysemy
 import Polysemy.Output
-
-data LogMode = Info | Debug | Warning | Error
 
 data Logger m a where
   LogInfo :: String -> Logger m ()
   LogError :: String -> Logger m ()
   LogWarning :: String -> Logger m ()
   LogDebug :: String -> Logger m ()
-  
 
 makeSem ''Logger
 
 runLoggerToIOUnsafe :: Member (Embed IO) r => (String -> IO ()) -> Sem (Logger ': r) a -> Sem r a
 runLoggerToIOUnsafe out =
-  runOutputSem (\s -> embed $ out s) . reinterpret \case
-    LogInfo msg -> output $ "info: " ++ msg ++ "\n"
+  runOutputSem (embed . out) . reinterpret \case
     LogError msg -> output $ "error: " ++ msg ++ "\n"
+    LogInfo msg -> output $ "info: " ++ msg ++ "\n"
     LogWarning msg -> output $ "warning: " ++ msg ++ "\n"
     LogDebug msg -> output $ "debug: " ++ msg ++ "\n"
 
