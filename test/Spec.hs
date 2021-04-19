@@ -1,2 +1,7 @@
-main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+import Test.Hspec
+
+
+
+spec :: Spec
+spec = do
+  undefined

@@ -33,6 +33,7 @@ dependencies:
   - bytestring
   - clock
   - formatting
+  - process-extras
 #- plot
 
 

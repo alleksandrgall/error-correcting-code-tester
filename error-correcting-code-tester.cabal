@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ca453a646026949de1dabc6b9058e0f799fa9963bfbc3fedbe0cfc5d3d6a3812
+-- hash: de0d41c9f101e3e046558bcf4d105adebfe57df5ef69928358482286f3fd9671
 
 name:           error-correcting-code-tester
 version:        0.1.0.0
@@ -28,7 +28,7 @@ source-repository head
 library
   exposed-modules:
       Common.Logger
-      ExecStartup
+      Common.ExecStartup
       Experiment
       Sandbox
   other-modules:
@@ -48,6 +48,7 @@ library
     , hspec
     , polysemy
     , process
+    , process-extras
     , random
     , text
     , time
@@ -73,6 +74,7 @@ executable error-correcting-code-tester-exe
     , hspec
     , polysemy
     , process
+    , process-extras
     , random
     , text
     , time
@@ -99,6 +101,7 @@ test-suite error-correcting-code-tester-test
     , hspec
     , polysemy
     , process
+    , process-extras
     , random
     , text
     , time
