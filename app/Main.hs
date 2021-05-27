@@ -24,9 +24,9 @@ import Logger
 chainProg3 :: Member (ChainProcess Handle) r => ProgPath -> ProgPath -> ProgPath -> Handle ->  Sem r ()
 chainProg3 path1 path2 path3 stdin = do
   setInput stdin
-  runProgram AnyCompiled path1 ["fuck"]
-  runProgram AnyCompiled path2 ["shit"]
-  runProgram (Python "activate.bat") path3 ["yo"]
+  runProgram AnyCompiled path1 [""]
+  runProgram AnyCompiled path2 [""]
+  runProgram (Python "") path3 [""]
 
 data SomeEffect m a where 
   DoSomething :: SomeEffect m ()
@@ -40,4 +40,4 @@ main :: IO ()
 main = do
     h <- openFile "D:/Thesis/error-correcting-code-tester/temp/img.png" ReadMode
     exampleProgram
-  
+
