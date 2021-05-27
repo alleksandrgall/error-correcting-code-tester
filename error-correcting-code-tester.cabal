@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 725e031ae474010a339ae75bfb2b55beaee7d1f083ab3e4024a6763646d8976c
+-- hash: 2affd36c75416d67d9a8634909b5e210450b3b2ccc6cc455a291e4a481bab53c
 
 name:           error-correcting-code-tester
 version:        0.1.0.0
@@ -27,32 +27,47 @@ source-repository head
 
 library
   exposed-modules:
-      Experiment.Experiment
-      Experiment.Types.Common.FormatString
-      Experiment.Types.Common.FormatString.FormatString
-      Experiment.Types.Common.HandlerLang.Handler
-      Experiment.Types.Common.HandlerLang.HandlerDef
-      Experiment.Types.Common.ParamsLang.Params
-      Experiment.Types.PrepareStrings.PrepareStrings
-      FaultHandling
-      FaultHandling.HandlerExceptions
-      FaultHandling.HandlerExceptions.HandlerExceptions
+      ChainProcess
+      Common.ChainProcess
+      Common.Logger
+      Experiment
+      Logger
+      Sandbox
   other-modules:
       Paths_error_correcting_code_tester
   hs-source-dirs:
       src
+  default-extensions:
+      TemplateHaskell
+      DataKinds
+      FlexibleContexts
+      GADTs
+      LambdaCase
+      PolyKinds
+      RankNTypes
+      TypeApplications
+      ScopedTypeVariables
+      TypeOperators
+      TypeFamilies
+  ghc-options: -fplugin=Polysemy.Plugin -O2 -flate-specialise -fspecialise-aggressively
   build-depends:
-      array
-    , base >=4.7 && <5
+      base >=4.7 && <5
+    , bytestring
+    , clock
+    , composition-prelude
     , containers
     , directory
-    , free
-    , mtl
+    , filepath
+    , formatting
+    , hspec
+    , polysemy
+    , polysemy-plugin
     , process
-    , simple-text-format
-    , temporary
+    , process-extras
+    , random
     , text
-    , unordered-containers
+    , time
+    , typed-process
   default-language: Haskell2010
 
 executable error-correcting-code-tester-exe
@@ -61,21 +76,37 @@ executable error-correcting-code-tester-exe
       Paths_error_correcting_code_tester
   hs-source-dirs:
       app
-  default-extensions: DataKinds FlexibleContexts GADTs LambdaCase PolyKinds RankNTypes TypeApplications ScopedTypeVariables TypeOperators TypeFamilies
-  ghc-options: -O2 -flate-specialise -fspecialise-aggressively -threaded -rtsopts -with-rtsopts=-N
+  default-extensions:
+      DataKinds
+      FlexibleContexts
+      GADTs
+      LambdaCase
+      PolyKinds
+      RankNTypes
+      TypeApplications
+      ScopedTypeVariables
+      TypeOperators
+      TypeFamilies
+  ghc-options: -fplugin=Polysemy.Plugin -O2 -flate-specialise -fspecialise-aggressively -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      array
-    , base >=4.7 && <5
+      base >=4.7 && <5
+    , bytestring
+    , clock
+    , composition-prelude
     , containers
     , directory
     , error-correcting-code-tester
-    , free
-    , mtl
+    , filepath
+    , formatting
+    , hspec
+    , polysemy
+    , polysemy-plugin
     , process
-    , simple-text-format
-    , temporary
+    , process-extras
+    , random
     , text
-    , unordered-containers
+    , time
+    , typed-process
   default-language: Haskell2010
 
 test-suite error-correcting-code-tester-test
@@ -85,18 +116,35 @@ test-suite error-correcting-code-tester-test
       Paths_error_correcting_code_tester
   hs-source-dirs:
       test
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  default-extensions:
+      DataKinds
+      FlexibleContexts
+      GADTs
+      LambdaCase
+      PolyKinds
+      RankNTypes
+      TypeApplications
+      ScopedTypeVariables
+      TypeOperators
+      TypeFamilies
+  ghc-options: -fplugin=Polysemy.Plugin -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      array
-    , base >=4.7 && <5
+      base >=4.7 && <5
+    , bytestring
+    , clock
+    , composition-prelude
     , containers
     , directory
     , error-correcting-code-tester
-    , free
-    , mtl
+    , filepath
+    , formatting
+    , hspec
+    , polysemy
+    , polysemy-plugin
     , process
-    , simple-text-format
-    , temporary
+    , process-extras
+    , random
     , text
-    , unordered-containers
+    , time
+    , typed-process
   default-language: Haskell2010

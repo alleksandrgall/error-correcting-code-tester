@@ -5,12 +5,26 @@
 
 packages:
 - completed:
-    hackage: simple-text-format-0.1@sha256:96b9c962258b538fa842088adfa97487883b16781c13347516b6cd0644c0cc59,1748
+    hackage: polysemy-1.5.0.0@sha256:7edb723e7f703fe273a40e43fe33f6e8f7659fe60759e8698def1481262d314d,6246
     pantry-tree:
-      size: 414
-      sha256: aff374980e891f480840e57369bcbe8f7aa9edd1f47261e3db8c5a8279f40284
+      size: 4438
+      sha256: 7b7d379751f79f0e0e5afcdf3d8092e5b8e04515710f21f514aa8f29ce4835f4
   original:
-    hackage: simple-text-format-0.1@sha256:96b9c962258b538fa842088adfa97487883b16781c13347516b6cd0644c0cc59,1748
+    hackage: polysemy-1.5.0.0@sha256:7edb723e7f703fe273a40e43fe33f6e8f7659fe60759e8698def1481262d314d,6246
+- completed:
+    hackage: polysemy-plugin-0.3.0.0@sha256:22e7553d0fddb48d9484ba1c71d2ed825213fcb214866d9b502ee02bfb960cb4,3121
+    pantry-tree:
+      size: 1162
+      sha256: 8d0bbea846d4410b769687daa8595ff1349efd02c1ab528a857883388dd2db45
+  original:
+    hackage: polysemy-plugin-0.3.0.0@sha256:22e7553d0fddb48d9484ba1c71d2ed825213fcb214866d9b502ee02bfb960cb4,3121
+- completed:
+    hackage: composition-prelude-3.0.0.2@sha256:1ffed216bd28d810fce0b5be83a661e2a892696d73b3f8de5c0f5edb9b5f0090,1216
+    pantry-tree:
+      size: 284
+      sha256: 94fc1c55e9065ae575315ac52a552d0e03beaefef4669a58a9745c6d71b4dd6b
+  original:
+    hackage: composition-prelude-3.0.0.2@sha256:1ffed216bd28d810fce0b5be83a661e2a892696d73b3f8de5c0f5edb9b5f0090,1216
 snapshots:
 - completed:
     size: 567037

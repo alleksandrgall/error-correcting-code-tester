@@ -1,0 +1,8 @@
+info: GameStarts
+info: Guess # 1 was 1
+info: Guess # 2 was 2
+info: Guess # 3 was 3
+info: Guess # 4 was 4
+info: Guess # 5 was 5
+info: GameOver
+[2021-04-12 15:01:46.3210343 UTC]> info: GameStarts[2021-04-12 15:02:09.630043 UTC]> info: Guess # 1 was 1[2021-04-12 15:02:10.5342953 UTC]> info: Guess # 2 was 3[2021-04-12 15:02:11.3113081 UTC]> info: Guess # 3 was 4[2021-04-12 15:02:12.024101 UTC]> info: Guess # 4 was 5[2021-04-12 15:02:12.6045827 UTC]> info: Guess # 5 was 6[2021-04-12 15:02:12.6045827 UTC]> info: GameOver
