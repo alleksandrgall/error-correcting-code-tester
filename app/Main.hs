@@ -1,3 +1,14 @@
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE TypeFamilies #-}
 module Main where
 
 import qualified Sandbox
@@ -17,9 +28,16 @@ chainProg3 path1 path2 path3 stdin = do
   runProgram AnyCompiled path2 ["shit"]
   runProgram (Python "activate.bat") path3 ["yo"]
 
+data SomeEffect m a where 
+  DoSomething :: SomeEffect m ()
+
+makeSem ''SomeEffect
+
+exampleProgram ::  Member SomeEffect r => String -> Sem r ()
+exampleProgram s = doSomething
+
 main :: IO ()
 main = do
-    undefined
---  h <- openFile "D:/Thesis/error-correcting-code-tester/temp/img.png" ReadMode
---  chainProg3
+    h <- openFile "D:/Thesis/error-correcting-code-tester/temp/img.png" ReadMode
+    exampleProgram
   
