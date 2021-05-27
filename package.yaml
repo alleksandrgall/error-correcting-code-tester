@@ -22,6 +22,8 @@ description:         Please see the README on GitHub at <https://github.com/gith
 dependencies:
   - base >= 4.7 && < 5
   - polysemy
+  - polysemy-plugin
+  - composition-prelude
   - text
   - random
   - hspec
@@ -34,8 +36,11 @@ dependencies:
   - clock
   - formatting
   - process-extras
+  - typed-process
 #- plot
 
+ghc-options:
+  -fplugin=Polysemy.Plugin
 
 library:
   source-dirs: src

@@ -2,7 +2,7 @@
 {-# LANGUAGE TypeApplications #-}
 
 module Common.Logger
-  ( Logger (..),
+  ( Logger(..),
     runLoggerToStdOut,
     runLoggerToStdOutUnsafeWithTime,
     runLoggerToFileUnsafeWithTime,
@@ -60,3 +60,4 @@ runLoggerToFileUnsafeWithTime fp = runLoggerToIOUnsafeWithTime $ appendFile fp
 
 runLoggerToStdOutUnsafeWithTime :: Member (Embed IO) r => Sem (Logger ': r) a -> Sem r a
 runLoggerToStdOutUnsafeWithTime = runLoggerToIOUnsafeWithTime putStr
+
