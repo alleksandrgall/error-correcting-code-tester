@@ -25,6 +25,55 @@ packages:
       sha256: 94fc1c55e9065ae575315ac52a552d0e03beaefef4669a58a9745c6d71b4dd6b
   original:
     hackage: composition-prelude-3.0.0.2@sha256:1ffed216bd28d810fce0b5be83a661e2a892696d73b3f8de5c0f5edb9b5f0090,1216
+- completed:
+    hackage: cairo-0.13.8.1@sha256:1938aaeb5d3504678d995774dfe870f6b66cbd43d336b692fa8779b23b2b67a9,4075
+    pantry-tree:
+      size: 2830
+      sha256: 8f6344da4c578a4dd3a49c333e2158b695bfae32a74d34a76bbc6e531b70c95c
+  original:
+    hackage: cairo-0.13.8.1@sha256:1938aaeb5d3504678d995774dfe870f6b66cbd43d336b692fa8779b23b2b67a9,4075
+- completed:
+    hackage: gtk2hs-buildtools-0.13.8.0@sha256:132f38155fc677430a47ea750918973161c876fb6f281d342ac2f07eb99229ce,5238
+    pantry-tree:
+      size: 3588
+      sha256: 4552e3c0f2ef0f16285c38898d7e2b6aeea67d4e37cd203b0c82f70592096c45
+  original:
+    hackage: gtk2hs-buildtools-0.13.8.0@sha256:132f38155fc677430a47ea750918973161c876fb6f281d342ac2f07eb99229ce,5238
+- completed:
+    hackage: Chart-cairo-1.9.3@sha256:f79100109af9c83f65d23c3409b2a449820e523d468d1f2340f2dd36acfd237d,924
+    pantry-tree:
+      size: 238
+      sha256: 6a84b766c3231380ab8d77102e4f1876b7868f99fbaf449dc0b46e293cbc59b2
+  original:
+    hackage: Chart-cairo-1.9.3@sha256:f79100109af9c83f65d23c3409b2a449820e523d468d1f2340f2dd36acfd237d,924
+- completed:
+    hackage: lift-type-0.1.0.1@sha256:6e38e49bf086fd2203346417d96ad2e6c300d8d8f41d222780abdccc7a4e451b,1106
+    pantry-tree:
+      size: 361
+      sha256: 9de4bdc6ce32b78c28b4bce75b5b2e488bf0f875a136ae269a02df804eb94a1a
+  original:
+    hackage: lift-type-0.1.0.1@sha256:6e38e49bf086fd2203346417d96ad2e6c300d8d8f41d222780abdccc7a4e451b,1106
+- completed:
+    hackage: persistent-2.13.0.2@sha256:edc8c5bd22fb828cf7624c3ce92f4e9c7cf979c6a1d458745d33cd70f06e10fc,6297
+    pantry-tree:
+      size: 5274
+      sha256: 49172d5284066f2d5b6e61697705bca101ec8f3d24987f2308abba470dd2caca
+  original:
+    hackage: persistent-2.13.0.2@sha256:edc8c5bd22fb828cf7624c3ce92f4e9c7cf979c6a1d458745d33cd70f06e10fc,6297
+- completed:
+    hackage: persistent-sqlite-2.13.0.3@sha256:db71e29aeea789fd12ae5cb8d15787fcdd2efae26556a0b869b168093525393d,5155
+    pantry-tree:
+      size: 834
+      sha256: 840554bbd97926c1675a544b1c7add41e302ff462095a34348e69c39eb76fc1d
+  original:
+    hackage: persistent-sqlite-2.13.0.3@sha256:db71e29aeea789fd12ae5cb8d15787fcdd2efae26556a0b869b168093525393d,5155
+- completed:
+    hackage: bits-bytestring-0.1.0.1@sha256:ba1a108bfa2788a80c3be434c2d2b8bc2ed791be54b9164d4b92898ba001e1fa,1825
+    pantry-tree:
+      size: 343
+      sha256: 90e0049819e1a141f7232dc6f7fcea425c85a923f601d7a242ec8c73da8b78d9
+  original:
+    hackage: bits-bytestring-0.1.0.1@sha256:ba1a108bfa2788a80c3be434c2d2b8bc2ed791be54b9164d4b92898ba001e1fa,1825
 snapshots:
 - completed:
     size: 567037

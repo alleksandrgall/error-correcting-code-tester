@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2affd36c75416d67d9a8634909b5e210450b3b2ccc6cc455a291e4a481bab53c
+-- hash: 2531520a78120f51eeb1e86fd32e29f5913ecee4c10c5238cb25213936c97481
 
 name:           error-correcting-code-tester
 version:        0.1.0.0
@@ -28,9 +28,17 @@ source-repository head
 library
   exposed-modules:
       ChainProcess
+      Common.App
+      Common.Calculations
       Common.ChainProcess
+      Common.DB
+      Common.DBLang
       Common.Logger
+      Common.Plot
       Experiment
+      Experiment.Core
+      Experiment.InbuildNoise
+      HexCalc
       Logger
       Sandbox
   other-modules:
@@ -39,6 +47,12 @@ library
       src
   default-extensions:
       TemplateHaskell
+      QuasiQuotes
+      MultiParamTypeClasses
+      GeneralizedNewtypeDeriving
+      RecordWildCards
+      FlexibleInstances
+      OverloadedStrings
       DataKinds
       FlexibleContexts
       GADTs
@@ -49,22 +63,38 @@ library
       ScopedTypeVariables
       TypeOperators
       TypeFamilies
-  ghc-options: -fplugin=Polysemy.Plugin -O2 -flate-specialise -fspecialise-aggressively
+  ghc-options: -fplugin=Polysemy.Plugin -fplugin=Polysemy.Plugin -O2 -flate-specialise -fspecialise-aggressively
   build-depends:
-      base >=4.7 && <5
+      Chart
+    , Chart-cairo
+    , base >=4.7 && <5
+    , binary
+    , bits-bytestring
+    , bits-extra
     , bytestring
+    , cairo
     , clock
     , composition-prelude
     , containers
     , directory
     , filepath
     , formatting
+    , ghci-hexcalc
+    , hexstring
     , hspec
+    , lens
+    , monad-logger
+    , mtl
+    , parallel
+    , persistent >=2.13.0.2
+    , persistent-sqlite >=2.13
     , polysemy
     , polysemy-plugin
     , process
     , process-extras
     , random
+    , resourcet
+    , temporary-rc
     , text
     , time
     , typed-process
@@ -77,6 +107,13 @@ executable error-correcting-code-tester-exe
   hs-source-dirs:
       app
   default-extensions:
+      TemplateHaskell
+      QuasiQuotes
+      MultiParamTypeClasses
+      GeneralizedNewtypeDeriving
+      RecordWildCards
+      FlexibleInstances
+      OverloadedStrings
       DataKinds
       FlexibleContexts
       GADTs
@@ -87,10 +124,16 @@ executable error-correcting-code-tester-exe
       ScopedTypeVariables
       TypeOperators
       TypeFamilies
-  ghc-options: -fplugin=Polysemy.Plugin -O2 -flate-specialise -fspecialise-aggressively -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -fplugin=Polysemy.Plugin -fplugin=Polysemy.Plugin -O2 -flate-specialise -fspecialise-aggressively -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      Chart
+    , Chart-cairo
+    , base >=4.7 && <5
+    , binary
+    , bits-bytestring
+    , bits-extra
     , bytestring
+    , cairo
     , clock
     , composition-prelude
     , containers
@@ -98,12 +141,22 @@ executable error-correcting-code-tester-exe
     , error-correcting-code-tester
     , filepath
     , formatting
+    , ghci-hexcalc
+    , hexstring
     , hspec
+    , lens
+    , monad-logger
+    , mtl
+    , parallel
+    , persistent >=2.13.0.2
+    , persistent-sqlite >=2.13
     , polysemy
     , polysemy-plugin
     , process
     , process-extras
     , random
+    , resourcet
+    , temporary-rc
     , text
     , time
     , typed-process
@@ -117,6 +170,13 @@ test-suite error-correcting-code-tester-test
   hs-source-dirs:
       test
   default-extensions:
+      TemplateHaskell
+      QuasiQuotes
+      MultiParamTypeClasses
+      GeneralizedNewtypeDeriving
+      RecordWildCards
+      FlexibleInstances
+      OverloadedStrings
       DataKinds
       FlexibleContexts
       GADTs
@@ -127,10 +187,16 @@ test-suite error-correcting-code-tester-test
       ScopedTypeVariables
       TypeOperators
       TypeFamilies
-  ghc-options: -fplugin=Polysemy.Plugin -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -fplugin=Polysemy.Plugin -fplugin=Polysemy.Plugin -O2 -flate-specialise -fspecialise-aggressively -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      Chart
+    , Chart-cairo
+    , base >=4.7 && <5
+    , binary
+    , bits-bytestring
+    , bits-extra
     , bytestring
+    , cairo
     , clock
     , composition-prelude
     , containers
@@ -138,12 +204,22 @@ test-suite error-correcting-code-tester-test
     , error-correcting-code-tester
     , filepath
     , formatting
+    , ghci-hexcalc
+    , hexstring
     , hspec
+    , lens
+    , monad-logger
+    , mtl
+    , parallel
+    , persistent >=2.13.0.2
+    , persistent-sqlite >=2.13
     , polysemy
     , polysemy-plugin
     , process
     , process-extras
     , random
+    , resourcet
+    , temporary-rc
     , text
     , time
     , typed-process

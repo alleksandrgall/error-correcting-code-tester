@@ -19,6 +19,9 @@ where
 import Data.Time.Clock (getCurrentTime)
 import Polysemy
 import Polysemy.Output
+import Common.Plot
+import Common.ChainProcess
+import System.IO
 
 data Logger m a where
   LogInfo :: String -> Logger m ()
@@ -27,6 +30,19 @@ data Logger m a where
   LogDebug :: String -> Logger m ()
 
 makeSem ''Logger
+
+--addLogging :: forall s r a. Members '[ChainProcess s, ChartLang, Logger] r => Sem r a -> Sem r a
+--addLogging = intercept \case
+--  MakeChart cp ff -> do
+--    fp <- makeChart cp ff
+--    logInfo $ "Chart with name " ++ legend cp ++ " to " ++ fp ++ " with plots:\n " ++ foldl (\str p -> str ++ "Name " ++ plotName p ++ " color " ++ (show . color $ p) ++ "\n") "" (plotsDouble cp)
+--    return fp
+--  SetInput h -> do
+--    setInput h
+--    logInfo "New input set"
+--  RunProgram pInfo -> do
+--    runProgram pInfo
+--    --logInfo $ "Executable at path " ++ path ++ " with arguments " ++ args ++ " successfully launched"
 
 runLoggerToIOUnsafe :: Member (Embed IO) r => (String -> IO ()) -> Sem (Logger ': r) a -> Sem r a
 runLoggerToIOUnsafe out =
