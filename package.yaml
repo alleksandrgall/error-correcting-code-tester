@@ -29,6 +29,8 @@ dependencies:
   - cairo
   - temporary-rc
   - mtl
+  - aeson
+  - deepseq
   - monad-logger
   - resourcet
   - binary

@@ -3,6 +3,7 @@ module Experiment.Core where
 import Control.Lens
 import Language.Haskell.TH.Lens
 import Common.Plot (Color(..), AxesType(..))
+import Polysemy
 
 --Список графиков которые могут получится в результате:
 --1(2). График доли ошибки после декодирования[ось Y] в бите(слове) для одной/нескольких пар кодер-декодер с общим генератором ошибок
@@ -31,17 +32,36 @@ data ProgramInfo = ProgramInfo {
   formatStr :: String,
   env :: Maybe FilePath
   } | Inbuild InbuildNoise 
- 
 
---data NoiseSettings = NoiseSettings {noiseInfo :: ProgramInfo} | Even | Burst
---data NoiseCascadeSettings = NoiseCascadeSettings NoiseSettings NoiseCascadeSettings | NoiseCascadeSettingsLast NoiseSettings
---
---newtype CoderSettings = CoderSettings {coderInfo :: ProgramInfo}
---data CoderCascadeSettings = CoderCascadeSettings CoderSettings CoderCascadeSettings | CoderCascadeSettingsLast CoderSettings
---
---newtype DecoderSettings = DecoderSettings {decoderInfo :: ProgramInfo}
---data DecoderCascadeSettings = DecoderCascadeSettings DecoderSettings DecoderCascadeSettings | DecoderCascadeSettingsLast DecoderSettings
---
+exampleCoder :: Int -> Int ->  ProgramInfo
+exampleCoder n k = ProgramInfo Coder "D:/hamming-codec/build/bin/example_encode.exe" 
+  (show n ++ " " ++ show k) Nothing
+
+exampleDecoder n k = ProgramInfo Coder "D:/hamming-codec/build/bin/example_decode.exe" 
+  (show n ++ " " ++ show k) Nothing
+
+evenNoise p = Inbuild (Even p)
+
+burstNoise p (i1, i2) = Inbuild (Burst p (i1, i2))
+
+stdinput = "D:/Thesis/error-correcting-code-tester/DB/Files/img1.jpg"
+
+data NoiseSettings = NoiseSettings {noiseInfo :: ProgramInfo}
+data NoiseCascadeSettings = NoiseCascadeSettings NoiseSettings NoiseCascadeSettings | NoiseCascadeSettingsLast NoiseSettings
+
+newtype CoderSettings = CoderSettings {coderInfo :: ProgramInfo}
+data CoderCascadeSettings = CoderCascadeSettings CoderSettings CoderCascadeSettings | CoderCascadeSettingsLast CoderSettings
+
+newtype DecoderSettings = DecoderSettings {decoderInfo :: ProgramInfo}
+data DecoderCascadeSettings = DecoderCascadeSettings DecoderSettings DecoderCascadeSettings | DecoderCascadeSettingsLast DecoderSettings
+
+data Channel = Channel {
+  coder :: CoderCascadeSettings,
+  decoder :: DecoderCascadeSettings,
+  noise :: NoiseCascadeSettings,
+  channelName :: String
+}
+
 --data PlotSettings = PlotSettings {
 --  settingsCoder :: CoderCascadeSettings,
 --  settingsNoise :: NoiseCascadeSettings,

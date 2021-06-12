@@ -7,8 +7,11 @@ import qualified Data.ByteString.Lazy as BL
 import Data.Bits as Bi
 import Data.List
 import Control.Monad
+import Data.Monoid
 import System.IO
-
+import Experiment.InbuildNoise
+import HexCalc
+import Control.DeepSeq
 
 
 getErrorRate :: B.ByteString -> B.ByteString -> Double
@@ -16,13 +19,17 @@ getErrorRate orig corrupted = let smallestLength = min (B.length orig) (B.length
                                   errorCount = sum $ zipWith (\origW corW -> Bi.popCount (origW `xor` corW)) (B.unpack orig) (B.unpack corrupted)
                               in fromIntegral errorCount / fromIntegral (smallestLength * 8)
 
+getErrorRateWordBool :: Int -> [Bool] -> [Bool] -> Double
+getErrorRateWordBool len orig corrupted =
+  let wordsInOrig = splitEvery len orig
+      wordsInCorrupted = splitEvery len corrupted
+  in force $ (fromIntegral . sum . zipWith (\w1 w2 -> fromEnum (w1 /= w2)) wordsInOrig $ wordsInCorrupted) /(fromIntegral . length $ wordsInOrig)
+
 getErrorRateBool :: [Bool] -> [Bool] -> Double
 getErrorRateBool orig corrupted =  (fromIntegral . sum . zipWith (\b1 b2 -> fromEnum (b1 == not b2)) orig $ corrupted) / (fromIntegral . length $ orig)
 
-data InputType a = InputType
-
-data Calculation m a where
-  ErrorInChannelToErrorInEncodedChannelWord :: Bool -> FilePath -> [(FilePath, Int, Int)] -> [Double] ->  Calculation m [(Double, Double)]
+data Calculation i m a where
+  ErrorInChannelToErrorInEncodedChannelWord :: Bool -> i -> [((i, Int), Double)] ->  Calculation i m [(Double, Double)]
 --Валидация программы через формулу в вотсапе
 --  CompetionToIzbitochnost' :: Calculation m (Double, Double)
 --  ErrorInChannelToErrorInEncodedChannelBit :: Calculation m (Double, Double)
@@ -30,30 +37,52 @@ data Calculation m a where
 
 makeSem ''Calculation
 
-interpreterCalc :: Member (Embed IO) r => Sem (Calculation ': r) a -> Sem r a
+
+zipWithCompensationb :: [Bool] -> (([Bool], Int), Double) -> (Double, Double)
+zipWithCompensationb mes ((dec, k), p) =  (p, 1 - (1 - getErrorRateWordBool k dec mes) ** ((1 :: Double) / fromIntegral k))
+
+zipNoCompensationb :: [Bool] -> (([Bool], Int), Double) -> (Double, Double)
+zipNoCompensationb mes ((dec, k), p) = (p, getErrorRateWordBool k dec mes)
+
+interpreterCalcBool :: forall r a . Sem (Calculation [Bool] ': r) a -> Sem r a
+interpreterCalcBool = interpret \case
+  ErrorInChannelToErrorInEncodedChannelWord compensationForDimFlag mes dec -> do
+    let
+      res = if compensationForDimFlag then
+             map (zipWithCompensationb mes) dec
+            else
+             map (zipNoCompensationb mes) dec
+    return $ force res
+
+interpreterCalc :: forall r a . Member (Embed IO) r => Sem (Calculation FilePath ': r) a -> Sem r a
 interpreterCalc = interpret \case
-  ErrorInChannelToErrorInEncodedChannelWord compensationForDimFlag mes decodeds probErrs -> do
+  ErrorInChannelToErrorInEncodedChannelWord compensationForDimFlag mes dec -> do
     hM <- embed $ openFile mes ReadMode
     embed $ hSetBuffering hM (BlockBuffering (Just 64))
     mesBs <- embed $ B.hGetContents hM
+    let bools = readBytestringAsBoolList mesBs
     res <- if compensationForDimFlag then
-      embed (zipWithM (zipWithCompensation mesBs) decodeds probErrs :: IO [(Double, Double)])
+      embed (mapM (zipWithCompensation bools) dec  :: IO [(Double, Double)])
     else
-      embed (zipWithM (zipNoCompensation mesBs) decodeds probErrs :: IO [(Double, Double)])
+      embed (mapM (zipNoCompensation bools) dec :: IO [(Double, Double)])
     embed $ hClose hM
     return res
     where
-      zipWithCompensation mesBs (fp, n, k) p = do
+      zipWithCompensation mesBs ((fp, k), p) = do
         h <- openFile fp ReadMode
         hSetBuffering h (BlockBuffering (Just 64))
         bs <- B.hGetContents h
-        let erRate = 1 - (1 - getErrorRate bs mesBs) ** ((1 :: Double) / (fromIntegral k))
+        let
+          bools = readBytestringAsBoolList bs
+          erRate = 1 - (1 - getErrorRateWordBool k bools mesBs) ** ((1 :: Double) / (fromIntegral k))
         hClose h
-        return (erRate, p)
-      zipNoCompensation mesBs (fp, n, k) p = do
+        return (p, erRate)
+      zipNoCompensation mesBs ((fp, k), p) = do
         h <- openFile fp ReadMode
         hSetBuffering h (BlockBuffering (Just 64))
         bs <- B.hGetContents h
-        let erRate = getErrorRate bs mesBs
+        let
+          bools = readBytestringAsBoolList bs 
+          erRate = getErrorRateWordBool k bools mesBs
         hClose h
-        return (erRate, p)
+        return (p, erRate)

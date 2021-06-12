@@ -7,6 +7,7 @@ import Data.List
 import Data.Bits.ByteString
 import Data.Bits.Pdep
 import Data.Word
+import Control.Exception (evaluate)
 
 splitEvery :: Int -> [a] -> [[a]]
 splitEvery _ [] = []
@@ -31,7 +32,7 @@ evenErrorsBool mes p = do
   g <- getStdGen
   let (p' :: Float) = realToFrac p
       rs = randomRs (0 :: Float, 1 :: Float) g
-  return $ zipWith (\b r -> b /= (r < p')) mes rs
+  evaluate $ zipWith (\b r -> b /= (r < p')) mes rs
 
 burstErrorsBool :: (Int, Int) -> [Bool] -> Double -> IO [Bool]
 burstErrorsBool (lowerBound, higherBound) mes p = do
@@ -40,8 +41,9 @@ burstErrorsBool (lowerBound, higherBound) mes p = do
       rs = randomRs (0 :: Float, 1 :: Float) g
       (avrgErrorBurstLength :: Float) = fromIntegral (sum [lowerBound .. higherBound]) / fromIntegral (higherBound - lowerBound + 1)
       (burstRate :: Float) = 1 / (avrgErrorBurstLength * ((1 :: Float)/p' - 1) + 1)
-  return $ fst . foldl' (\(acc, (i, gen)) (r, b) -> if i > 0 then (not b:acc, (i - 1, gen)) else 
-    if r > p' then (b : acc, (i, gen)) else let (newI ,newGen) = randomR (lowerBound, higherBound) gen in ( not b : acc, (newI - 1, newGen))) ([], (0, g)) $ (zip rs mes)
+  evaluate $ fst . foldl' (\(acc, (i, gen)) (r, b) -> if i > 0 then (not b:acc, (i - 1, gen)) else 
+    if r > p' then (b : acc, (i, gen)) else 
+      let (newI ,newGen) = randomR (lowerBound, higherBound) gen in ( not b : acc, (newI - 1, newGen))) ([], (0, g)) $ (zip rs mes)
 
 burstErrors :: (Int, Int) -> ByteString -> Double -> IO ByteString
 burstErrors (lowerBound, higherBound) mes p = do

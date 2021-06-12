@@ -1,6 +1,6 @@
 module HexCalc where
 
-import Data.ByteString as B (ByteString, pack, unpack)
+import qualified Data.ByteString as B
 import Data.Bits
 import Text.Printf (printf)
 import Data.Binary
@@ -8,6 +8,7 @@ import Experiment.InbuildNoise
 import Data.List (foldl')
 import Control.Monad
 import Numeric
+import Control.Parallel.Strategies
 
 whileM :: Monad m => (a -> Bool) -> (a -> m a) -> a -> m ()
 whileM test act st =
@@ -19,10 +20,25 @@ whileMonoidM test act st =
 
 boolsToHexList :: Int -> [Bool] -> [String]
 boolsToHexList wordLength bools = map (\x -> "0x" ++ (printf "%x" . snd . foldl' (\(pow, acc) b ->
-  (pow - 1, (fromEnum b) * 2^pow + acc)) (wordLength - 1, 0) $ x))  (splitEvery wordLength bools)
+  (pow - 1, (fromEnum b) * 2^pow + acc)) (wordLength - 1, 0) $ x))  (splitEvery wordLength bools) `using` parList rdeepseq
+
+boolsToHexListNoComp :: Int -> [Bool] -> [String]
+boolsToHexListNoComp wordLength bools = map (\x -> "0x" ++ (printf "%x" . snd . foldl' (\(pow, acc) b ->
+  (pow - 1, (fromEnum b) * 2^pow + acc)) (wordLength - 1, 0) $ x))  (splitEvery wordLength bools) 
+  --
 --
-hexListToBools :: [String] -> [Bool]
-hexListToBools = concatMap (\hex ->  let (int :: Int) = fst. head . readHex . tail . dropWhile (/='x') $ hex in stringToBool . printf "%b" $ int)
+hexListToBools :: Int -> [String] -> [Bool]
+hexListToBools l str = 
+  let res =  map (\hex ->  let (int :: Int) = fst. head . readHex . tail . dropWhile (/='x') $ hex in stringToBool . 
+        printf ("%" ++ "0" ++ (show l) ++ "b") $ int) str `using` parList rdeepseq
+  in concat res   
+  where stringToBool :: String -> [Bool]
+        stringToBool = reverse . foldl' (\acc c -> (c == '1'):acc) []
+        
+hexListToBoolsNoComp :: [String] -> [Bool]
+hexListToBoolsNoComp str = 
+  let res =  map (\hex ->  let (int :: Int) = fst. head . readHex . tail . dropWhile (/='x') $ hex in stringToBool . printf ("%" ++ "0b") $ int) str `using` parList rdeepseq
+  in concat res   
   where stringToBool :: String -> [Bool]
         stringToBool = reverse . foldl' (\acc c -> (c == '1'):acc) []
 
