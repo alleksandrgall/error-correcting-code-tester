@@ -72,13 +72,21 @@ makeSem ''ChartLang
 defaultChartOptions :: PlotDouble -> ChartParams
 defaultChartOptions p = ChartParamsDouble [p] (plotName p) (Linear, "") (Linear, "")
 
+errorPlot :: [Double] -> Color -> PlotDouble
+errorPlot d c = PlotDouble 
+  (map (\d -> (d, d)) d)
+  ("График ошибок в канале")
+  c
+  
+
 interpretChartLangCairo :: Members '[Embed IO] r => FilePath -> InterpreterFor ChartLang r
 interpretChartLangCairo dir = interpret \case
   MakeChart chartParams@ChartParamsDouble {} fileFormat -> do
     (chartPath, h) <- embed $ openTempFile dir (showFileFormat fileFormat)
     embed $ hClose h
     embed $
-      toFile def chartPath $ do
+      toFile (def {_fo_size = (1920, 1080)}) chartPath $ do
+        layout_all_font_styles . font_size .= 30
         layout_title .= legend chartParams
         layout_x_axis . laxis_title .= (snd . xAxis $ chartParams)
         layout_x_axis . laxis_generate .= (axisTypeToScaling . fst . xAxis $ chartParams)

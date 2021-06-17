@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 75f0cd87b99f35a2293a9965be58097fe0f533d4e7506075118938900970a1f6
+-- hash: 9572c38b1dc46e1df6b60b6ec9dfff3d60db0a2574a5efbadd1147e56574c2e3
 
 name:           error-correcting-code-tester
 version:        0.1.0.0
@@ -37,9 +37,12 @@ library
       Common.Plot
       Experiment
       Experiment.Core
+      Experiment.Experiment
+      Experiment.InbuildInterleaver
       Experiment.InbuildNoise
       HexCalc
       Logger
+      PraseArgs
       Sandbox
   other-modules:
       Paths_error_correcting_code_tester
@@ -79,6 +82,7 @@ library
     , containers
     , deepseq
     , directory
+    , exact-combinatorics
     , filepath
     , formatting
     , ghci-hexcalc
@@ -87,6 +91,7 @@ library
     , lens
     , monad-logger
     , mtl
+    , optparse-applicative
     , parallel
     , persistent >=2.13.0.2
     , persistent-sqlite >=2.13
@@ -144,6 +149,7 @@ executable error-correcting-code-tester-exe
     , deepseq
     , directory
     , error-correcting-code-tester
+    , exact-combinatorics
     , filepath
     , formatting
     , ghci-hexcalc
@@ -152,6 +158,7 @@ executable error-correcting-code-tester-exe
     , lens
     , monad-logger
     , mtl
+    , optparse-applicative
     , parallel
     , persistent >=2.13.0.2
     , persistent-sqlite >=2.13
@@ -209,6 +216,7 @@ test-suite error-correcting-code-tester-test
     , deepseq
     , directory
     , error-correcting-code-tester
+    , exact-combinatorics
     , filepath
     , formatting
     , ghci-hexcalc
@@ -217,6 +225,7 @@ test-suite error-correcting-code-tester-test
     , lens
     , monad-logger
     , mtl
+    , optparse-applicative
     , parallel
     , persistent >=2.13.0.2
     , persistent-sqlite >=2.13

@@ -2,7 +2,7 @@ module Experiment.Core where
 
 import Control.Lens
 import Language.Haskell.TH.Lens
-import Common.Plot (Color(..), AxesType(..))
+import Common.Plot 
 import Polysemy
 
 --Список графиков которые могут получится в результате:
@@ -17,21 +17,23 @@ import Polysemy
 --вероятностью ошибки[ось X]
 --Для кодов разных размерностей будет компенсация
 --Для кодеров/декодеров
-newtype ExperimentDir = ExperimentDir { path :: FilePath }
-
-data ErrorCountType = Word | Byte
-
-data Iterator a = PIter | NoIter
-
 data ProgramType = Coder | Decoder | Noise deriving (Eq, Show)
-data InbuildNoise = Even Double | Burst Double (Int, Int)
+data InbuildProg =  Even Double | 
+  Burst Double (Int, Int) | 
+  Interleaver Int Int | 
+  UnInterleaver Int Int |
+  Guilbert Double Double Double 
+    deriving (Eq, Show)
 
 data ProgramInfo = ProgramInfo {
   programType :: ProgramType,
   pathToProgram :: FilePath,
   formatStr :: String,
   env :: Maybe FilePath
-  } | Inbuild InbuildNoise 
+  } | Inbuild InbuildProg
+    deriving (Eq, Show)
+
+stdInterleaver n m = Just (Inbuild (Interleaver n m))
 
 exampleCoder :: Int -> Int ->  ProgramInfo
 exampleCoder n k = ProgramInfo Coder "D:/hamming-codec/build/bin/example_encode.exe" 
@@ -40,7 +42,11 @@ exampleCoder n k = ProgramInfo Coder "D:/hamming-codec/build/bin/example_encode.
 exampleDecoder n k = ProgramInfo Coder "D:/hamming-codec/build/bin/example_decode.exe" 
   (show n ++ " " ++ show k) Nothing
 
+guilberNoise p q pp = Inbuild (Guilbert p q pp)
 evenNoise p = Inbuild (Even p)
+
+interleaveBlock n m = Inbuild (Interleaver n m)
+unInterleaveBlock n m = Inbuild (UnInterleaver n m)
 
 burstNoise p (i1, i2) = Inbuild (Burst p (i1, i2))
 

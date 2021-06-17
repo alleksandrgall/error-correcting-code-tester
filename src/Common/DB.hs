@@ -19,7 +19,6 @@ Experiment
   experimentName String
   messageId MessageId
   logFilePath String
-  experimentConfigPath String
   timeOfExp UTCTime default=CURRENT_TIME
   runTimeSecs Double
 Plot
@@ -67,3 +66,8 @@ ChannelExperiment
   errorRateWord Double
   experimentId ExperimentId
 |]
+
+--test :: IO [FilePath]
+--test = runSqlite "DB/test.db" $ do
+--  runMigration migrate all
+--  plots <- selectList [ChannelE]

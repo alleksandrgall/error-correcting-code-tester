@@ -12,6 +12,7 @@ import System.IO
 import Experiment.InbuildNoise
 import HexCalc
 import Control.DeepSeq
+import Control.Exception
 
 
 getErrorRate :: B.ByteString -> B.ByteString -> Double
@@ -23,13 +24,15 @@ getErrorRateWordBool :: Int -> [Bool] -> [Bool] -> Double
 getErrorRateWordBool len orig corrupted =
   let wordsInOrig = splitEvery len orig
       wordsInCorrupted = splitEvery len corrupted
-  in force $ (fromIntegral . sum . zipWith (\w1 w2 -> fromEnum (w1 /= w2)) wordsInOrig $ wordsInCorrupted) /(fromIntegral . length $ wordsInOrig)
+  in force $ (fromIntegral . sum . zipWith (\w1 w2 -> fromEnum (w1 /= w2)) wordsInOrig $ wordsInCorrupted) /(fromIntegral . length $ wordsInCorrupted)
 
 getErrorRateBool :: [Bool] -> [Bool] -> Double
 getErrorRateBool orig corrupted =  (fromIntegral . sum . zipWith (\b1 b2 -> fromEnum (b1 == not b2)) orig $ corrupted) / (fromIntegral . length $ orig)
 
 data Calculation i m a where
   ErrorInChannelToErrorInEncodedChannelWord :: Bool -> i -> [((i, Int), Double)] ->  Calculation i m [(Double, Double)]
+  CountWordErrorRate :: i -> (i, Int) -> Calculation i m Double
+  ErrorInChannelToErrorInEncodedChannelBit :: Bool -> i -> [((i, Int), Double)] ->  Calculation i m [(Double, Double)]
 --Валидация программы через формулу в вотсапе
 --  CompetionToIzbitochnost' :: Calculation m (Double, Double)
 --  ErrorInChannelToErrorInEncodedChannelBit :: Calculation m (Double, Double)
@@ -46,6 +49,10 @@ zipNoCompensationb mes ((dec, k), p) = (p, getErrorRateWordBool k dec mes)
 
 interpreterCalcBool :: forall r a . Sem (Calculation [Bool] ': r) a -> Sem r a
 interpreterCalcBool = interpret \case
+  CountWordErrorRate mes (dec, n) -> do
+    let res = getErrorRateWordBool n mes dec
+    return $ force res
+    
   ErrorInChannelToErrorInEncodedChannelWord compensationForDimFlag mes dec -> do
     let
       res = if compensationForDimFlag then
@@ -66,7 +73,7 @@ interpreterCalc = interpret \case
     else
       embed (mapM (zipNoCompensation bools) dec :: IO [(Double, Double)])
     embed $ hClose hM
-    return res
+    embed $ evaluate res
     where
       zipWithCompensation mesBs ((fp, k), p) = do
         h <- openFile fp ReadMode

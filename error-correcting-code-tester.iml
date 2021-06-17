@@ -170,5 +170,8 @@
     <orderEntry type="library" name="hexstring-0.11.1" level="project" />
     <orderEntry type="library" name="base16-bytestring-0.1.1.7" level="project" />
     <orderEntry type="library" name="ghci-hexcalc-0.1.1.0" level="project" />
+    <orderEntry type="library" name="exact-combinatorics-0.2.0.9" level="project" />
+    <orderEntry type="library" name="optparse-applicative-0.15.1.0" level="project" />
+    <orderEntry type="library" name="ansi-wl-pprint-0.6.9" level="project" />
   </component>
 </module>

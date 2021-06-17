@@ -1,8 +1,9 @@
+{-# LANGUAGE BlockArguments #-}
 module Common.DBLang where
 
 import Polysemy
 import Polysemy.State
-import Common.DB as DB
+import qualified Common.DB as DB
 import Experiment.Core
 import Data.Time
 import Control.Monad.Reader
@@ -11,6 +12,7 @@ import Control.Monad.Trans.Resource
 import Database.Persist as P
 import Database.Persist.TH
 import Database.Persist.Sqlite
+import PraseArgs
 
 data ExperimentStats = ExperimentStats
   {
@@ -19,11 +21,21 @@ data ExperimentStats = ExperimentStats
     runTimeSec :: Double
   }
 
---type Transaction m a = ReaderT SqlBackend (NoLoggingT (ResourceT m)) a
---
---data DBLang s m a where
---  GetPlotsFromExperiment :: ExperimentId -> DBLang s m (Transaction s [FilePath])
---  GetCoderDecoderFromExperiment :: ExperimentId -> DBLang s m (Transaction s [([CoderSettings], [DecoderSettings])])
---  GetNoiseFromExperiment :: ExperimentId -> DBLang s m (Transaction s [[NoiseSettings]])
---  GetExperimentStats :: ExperimentId -> DBLang s m (Transaction s ExperimentStats)
-  
+data ExperimentRes = ExperimentRes
+  {
+  experimentConfig :: Experiment,
+  experimentStats :: ExperimentStats,
+  plotPaths :: [FilePath]
+  }
+
+data DBLang s m a where
+  GetPlotsFromExperiment :: String -> DBLang s m [String]
+  GetStatsExperiment :: String -> DBLang s m [ExperimentStats]
+  WriteExperiment :: ExperimentRes -> DBLang s m ()
+
+interpreterDBLangPersistent :: Member (Embed IO) r => Sem ((DBLang SqlBackend) ': r) a -> Sem r a
+interpreterDBLangPersistent = interpret \case
+  GetPlotsFromExperiment name -> embed . runSqlite "DB/test.db" $  do
+    exps <- selectKeysList [DB.ExperimentExperimentName ==. name] []
+    plots <- concat <$> (mapM (\e -> selectList [DB.PlotExperimentId ==. e] []) exps)
+    return $ map (\p -> DB.plotPath . entityVal $ p) plots

@@ -33,10 +33,12 @@ dependencies:
   - deepseq
   - monad-logger
   - resourcet
+  - exact-combinatorics
   - binary
   - hexstring
   - ghci-hexcalc
   - parallel
+  - optparse-applicative
   - persistent >= 2.13.0.2
   - persistent-sqlite >= 2.13
   - bits-extra
