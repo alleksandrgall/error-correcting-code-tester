@@ -44,7 +44,7 @@ hammingCode terleaver (Inbuild err) comp col mes n k i = do
   encoded1 <- getInputA
   ifInterleave In terleaver
   encodedIL <- getInputA
-  decodedInfo <- whileMonoidM (<0.0033)  (\p -> do
+  decodedInfo <- whileMonoidM (<0.033)  (\p -> do
     setInputA encodedIL
     case err of
       (Even _) -> runProgramA (evenNoise p)
@@ -56,8 +56,8 @@ hammingCode terleaver (Inbuild err) comp col mes n k i = do
     replicateM_ i $ runProgramA (exampleDecoder n k)
     decoded <- getInputA
     logInfoA $ "----" ++ show (pWord) ++ " || " ++ (show . getErrorRateWordBool k (inpMes mes) $ (inpMes decoded)) ++ "----"
-    return (p + 0.00001, [((inpMes decoded, k), pWord)])
-    ) 0.0001
+    return (p + 0.0002, [((inpMes decoded, k), pWord)])
+    ) 0.001
   points1 <- errorInChannelToErrorInEncodedChannelWordA comp (inpMes mes) decodedInfo
   setInputA encoded1
   return $ PlotDouble points1 ("Код Хэмминга (" ++ show n ++ ", " ++ show k ++ ")" ++
@@ -159,13 +159,13 @@ expAppPack = do
   inputFileA stdinput
   inputMes <- getInputA
   plotsUnInterleaved <-
-    zipWithM (\c cascNum -> hammingCode Nothing (Inbuild $ Burst 0.001 (6, 8)) True c inputMes 7 4 cascNum)
-       (replicate 4 R) [1, 2, 3, 4]
+    zipWithM (\c cascNum -> hammingCode Nothing (Inbuild $ Guilbert 0.3 0.9 0.001) False c inputMes 7 4 cascNum)
+       (replicate 4 R) [1]
   setInputA inputMes
   plotsInterleaved1 <-
-    zipWithM (\c cascNum -> hammingCode (stdInterleaver (cascNum*round(7/4)*7) (cascNum*round(7/4)*7)) (Inbuild $ Burst 0.001 (6, 8))
-      True c inputMes 7 4 cascNum)
-        (replicate 4 B) [1, 2, 3, 4]
+    zipWithM (\c cascNum -> hammingCode (stdInterleaver (cascNum*round(7/4)*7) (cascNum*round(7/4)*7)) (Inbuild $ Guilbert 0.3 0.9 0.001)
+      False c inputMes 7 4 cascNum)
+        (replicate 4 B) [1]
 
   let plotlls = concat . zipWith3 (\num p1 p2  ->
             [ChartParamsDouble [p1, p2]
