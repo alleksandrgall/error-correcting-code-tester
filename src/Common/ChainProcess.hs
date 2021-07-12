@@ -49,7 +49,7 @@ interpretChainProcessHandle dir = reinterpret \case
   InputFile fp -> do
      bools <- embed $ withFile fp ReadMode (\h -> readBytestringAsBoolList <$> (hSetBuffering h (BlockBuffering (Just 64)) >> B.hGetContents h))
      put ((bools, []), "")
-     return $ force (bools <> bools <> bools, [])
+     return $ force (bools <> bools <> bools <> bools, [])
      
   GetInput -> do
      ((bools, ints), _) <- get

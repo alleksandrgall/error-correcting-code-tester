@@ -132,6 +132,8 @@ hamming74Encode bools =
       encoded = concatMap (\[b0, b1, b2, b3] -> [b0 `xor` b1 `xor` b3, b0 `xor` b2 `xor` b3, b0, b1 `xor` b2 `xor` b3, b1, b2, b3]) (splitEvery 4 bool')
    in (encoded, leadingZeros)
 
+{-# INLINABLE hamming74Encode #-}
+
 hamming74Decode :: Int -> [Bool] -> [Bool]
 hamming74Decode leadingZeros bools =
   let sind :: [Bool] -> Int
@@ -142,6 +144,8 @@ hamming74Decode leadingZeros bools =
               + bool 0 4 (foldl1 xor (drop 3 word))
         )
    in drop leadingZeros . concatMap (\word -> let s = sind word in [(3 == s) `xor` word !! 2, (5 == s) `xor` word !! 4, (6 == s) `xor` word !! 5, (7 == s) `xor` word !! 6]) $ splitEvery 7 bools
+
+{-# INLINABLE hamming74Decode #-}
 
 hamming1511Encode :: [Bool] -> ([Bool], Int)
 hamming1511Encode bools =
@@ -171,6 +175,8 @@ hamming1511Encode bools =
           (splitEvery 11 bool')
    in (encoded, leadingZeros)
 
+{-# INLINABLE hamming1511Encode #-}
+
 hamming1511Decode :: Int -> [Bool] -> [Bool]
 hamming1511Decode leadingZeros bools =
   let sind :: [Bool] -> Int
@@ -199,3 +205,5 @@ hamming1511Decode leadingZeros bools =
                   ]
           )
         $ splitEvery 15 bools
+        
+{-# INLINABLE hamming1511Decode #-}

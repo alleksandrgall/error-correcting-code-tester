@@ -32,10 +32,3 @@ data DBLang s m a where
   GetPlotsFromExperiment :: String -> DBLang s m [String]
   GetStatsExperiment :: String -> DBLang s m [ExperimentStats]
   WriteExperiment :: ExperimentRes -> DBLang s m ()
-
-interpreterDBLangPersistent :: Member (Embed IO) r => Sem ((DBLang SqlBackend) ': r) a -> Sem r a
-interpreterDBLangPersistent = interpret \case
-  GetPlotsFromExperiment name -> embed . runSqlite "DB/test.db" $  do
-    exps <- selectKeysList [DB.ExperimentExperimentName ==. name] []
-    plots <- concat <$> (mapM (\e -> selectList [DB.PlotExperimentId ==. e] []) exps)
-    return $ map (\p -> DB.plotPath . entityVal $ p) plots

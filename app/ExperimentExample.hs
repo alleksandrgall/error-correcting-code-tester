@@ -56,17 +56,41 @@ hammingCode terleaver (Inbuild err) comp col mes n k i = do
     replicateM_ i $ runProgramA (exampleDecoder n k)
     decoded <- getInputA
     logInfoA $ "----" ++ show (pWord) ++ " || " ++ (show . getErrorRateWordBool k (inpMes mes) $ (inpMes decoded)) ++ "----"
-    return (p + 0.0002, [((inpMes decoded, k), pWord)])
+    return (p + 0.0001, [((inpMes decoded, k), pWord)])
     ) 0.001
   points1 <- errorInChannelToErrorInEncodedChannelWordA comp (inpMes mes) decodedInfo
   setInputA encoded1
   return $ PlotDouble points1 ("Код Хэмминга (" ++ show n ++ ", " ++ show k ++ ")" ++
---  (if comp then " с компенсацией размерности " else "") ++
+    (if comp then " с компенсацией размерности " else "") ++
     (if terleaver == Nothing then "" else let Just (Inbuild (Interleaver n m)) = terleaver in
       " с блочным перемежителем " ++ show n ++ " " ++ show m) ++ (case err of
           (Even p) -> " и одиночными ошибками"
           (Burst p (b1, b2)) -> " и пакетными ошибками длины от " ++ show b1 ++ " до " ++ show b2
-          (Guilbert p q pp)  -> " и гилбертовой моделью ошибокq=" ++ show q ++ "; p=" ++ show p)) col
+          (Guilbert p q pp)  -> " и гильбертовой моделью ошибок q=" ++ show q ++ "; p=" ++ show p) ++ "\n") col
+
+hammingCode' :: String -> (Maybe ProgramInfo) -> ProgramInfo -> Bool -> Color -> Inp [Bool] -> Int -> Int -> Int -> Sem (App (Inp [Bool]) [Bool] ': '[]) PlotDouble
+hammingCode' str terleaver (Inbuild err) comp col mes n k i = do
+  runProgramA (exampleCoder n k)
+  encoded1 <- getInputA
+  ifInterleave In terleaver
+  encodedIL <- getInputA
+  decodedInfo <- whileMonoidM (<0.01)  (\p -> do
+    setInputA encodedIL
+    case err of
+      (Even _) -> runProgramA (evenNoise p)
+      (Burst _ (b1, b2)) -> runProgramA (burstNoise p (b1, b2))
+      (Guilbert p' q _) -> runProgramA (guilberNoise p' q p)
+    ifInterleave Un terleaver
+    mes' <- fst <$> getInputA
+    pWord <- countWordErrorRateA (fst encoded1) (mes', n)
+    replicateM_ i $ runProgramA (exampleDecoder n k)
+    decoded <- getInputA
+    logInfoA $ "----" ++ show (pWord) ++ " || " ++ (show . getErrorRateWordBool k (inpMes mes) $ (inpMes decoded)) ++ "----"
+    return (p + 0.0001, [((inpMes decoded, k), pWord)])
+    ) 0.001
+  points1 <- errorInChannelToErrorInEncodedChannelWordA comp (inpMes mes) decodedInfo
+  setInputA encoded1
+  return $ PlotDouble points1 str col
 
 
 hammingCodeValid :: Color ->  Int -> Int -> Sem (App (Inp [Bool]) [Bool] ': '[]) PlotDouble
@@ -76,10 +100,11 @@ hammingCodeValid col n k = do
       slog :: Double -> Int -> Double
       slog p0 j = ((fact n)/((fact (n - j)) * (fact j))) 
             * ((p0 ** (fromIntegral j)) * ((1 - p0) ** (fromIntegral $ n-j)))
-  points1 <- whileMonoidM (<0.0033)  (\p -> do
-    return (p + 0.00001, [(p*(fromIntegral n), sum . map (slog p) $ [2..n])])
-    ) 0.0001
+  points1 <- whileMonoidM (<0.033)  (\p -> do
+    return (p + 0.0001, [(p*(fromIntegral n), sum . map (slog p) $ [2..n])])
+    ) 0.001
   return $ PlotDouble points1 ("Теоритическая вероятность неверного декодирования слова код Хэмминга (" ++ show n ++ ", " ++ show k ++ ")") col
+
 
 expAppValid :: Sem (App (Inp [Bool]) [Bool] ': '[]) ()
 expAppValid = do
@@ -90,6 +115,12 @@ expAppValid = do
   makeChartA (ChartParamsDouble [p1, p2] "Валидация программы сравнением теоритических и фактических долей неверно декодированных слов"
                (Linear, "Доля слов переданных с ошибкой в канале без защиты от ошибок") (Linear, "Доля слов переданных с ошибкой в канале с защитой от ошибок")) PNG
   return ()
+
+--expAppComp :: Sem (App (Inp [Bool]) [Bool] ': '[]) ()
+--expAppComp = do
+--  inputFileA stdinput
+--  inputMes <- getInputA
+--  p1 <- hammingCode Nothing (Inbuild $ Even 0) False B input
 
 expApp :: Sem (App (Inp [Bool]) [Bool] ': '[]) ()
 expApp = do
@@ -117,28 +148,24 @@ expApp = do
   chartOutAsJSONA c4 "c4"
   return ()
 
-expApp11_7 :: Sem (App (Inp [Bool]) [Bool] ': '[]) ()
-expApp11_7 = do
+expApp15_7 :: Sem (App (Inp [Bool]) [Bool] ': '[]) ()
+expApp15_7 = do
   inputFileA stdinput
-  inputMes <-getInputA
-  p1 <- hammingCode Nothing (Inbuild $ Even 0) False B inputMes 7 4 1
+  inputMes <- getInputA
+  p1 <- hammingCode' ("(7, 4) код Хэмминга c компенсацией на размерность") Nothing (Inbuild $ Even 0) True B inputMes 7 4 1
   setInputA inputMes
-  p2 <- hammingCode Nothing (Inbuild $ Even 0) True B inputMes 7 4 1
+  p2 <- hammingCode' ("(7, 4) код Хэмминга\n") Nothing (Inbuild $ Even 0) False B inputMes 7 4 1
   setInputA inputMes
-  p3 <- hammingCode Nothing (Inbuild $ Even 0) False R inputMes 15 11 1
+  p3 <- hammingCode' ("(15, 11) код Хэмминга с компенсацией на размерность") Nothing (Inbuild $ Even 0) True R inputMes 15 11 1
   setInputA inputMes
-  p4 <- hammingCode Nothing (Inbuild $ Even 0) True R inputMes 15 11 1
-  makeChartA (ChartParamsDouble [p1, p2, p3, p4] "Сравнение работы кодов разных размерностей с и без компенсации на размерность"
+  p4 <- hammingCode' ("(15, 11) код Хэмминга") Nothing (Inbuild $ Even 0) False R inputMes 15 11 1
+  let p1Max = fst. last . points $ p1
+      points3 = points p3
+      points4 = points p4
+      p3' = p3 {points = takeWhile (\(p, _) -> p < p1Max) points3}
+      p4' = p4 {points = takeWhile (\(p, _) -> p < p1Max) points4}
+  makeChartA (ChartParamsDouble [p1, p2, p3', p4'] "Тестовый эксперимент"
      (Linear, "Доля слов переданных с ошибкой в канале без защиты от ошибок") (Linear, "Доля слов переданных с ошибкой в канале с защитой от ошибок"))
-      PNG
-  makeChartA (ChartParamsDouble [p1, p2, p3, p4] "Сравнение работы кодов разных размерностей с и без компенсации на размерность"
-     (Logarithmic, "Доля слов переданных с ошибкой в канале без защиты от ошибок") (Logarithmic, "Доля слов переданных с ошибкой в канале с защитой от ошибок"))
-      PNG
-  makeChartA (ChartParamsDouble [p1, p2, p3, p4] "Сравнение работы кодов разных размерностей с и без компенсации на размерность"
-     (Logarithmic, "Доля слов переданных с ошибкой в канале без защиты от ошибок") (Linear, "Доля слов переданных с ошибкой в канале с защитой от ошибок"))
-      PNG
-  makeChartA (ChartParamsDouble [p1, p2, p3, p4] "Сравнение работы кодов разных размерностей с и без компенсации на размерность"
-     (Linear, "Доля слов переданных с ошибкой в канале без защиты от ошибок") (Logarithmic, "Доля слов переданных с ошибкой в канале с защитой от ошибок"))
       PNG
   return ()
 
@@ -148,8 +175,9 @@ expAppBurstVsEven = do
   inputMes <- getInputA
   p1 <- hammingCode Nothing (Inbuild $ Even 0) False B inputMes 15 11 1
   setInputA inputMes
-  p2 <- hammingCode Nothing (Inbuild $ Guilbert 0.1 0.9 0) False R inputMes 15 11 1
-  makeChartA (ChartParamsDouble [p1, p2] "Сравнение работы кода Хэмминга для пакетных и одиночных ошибок"
+  p2 <- hammingCode Nothing (Inbuild $ Guilbert 0.1 0.1 0) False R inputMes 15 11 1
+  makeChartA
+     (ChartParamsDouble [p1, p2] "Сравнение работы кода Хэмминга для пакетных и одиночных ошибок"
      (Linear, "Доля слов переданных с ошибкой в канале без защиты от ошибок") (Linear, "Доля слов переданных с ошибкой в канале с защитой от ошибок"))
       PNG
   return ()
@@ -159,27 +187,18 @@ expAppPack = do
   inputFileA stdinput
   inputMes <- getInputA
   plotsUnInterleaved <-
-    zipWithM (\c cascNum -> hammingCode Nothing (Inbuild $ Guilbert 0.3 0.9 0.001) False c inputMes 7 4 cascNum)
+    zipWithM (\c cascNum -> hammingCode Nothing (Inbuild $ Guilbert 0.1 0.1 0.001) False c inputMes 7 4 cascNum)
        (replicate 4 R) [1]
   setInputA inputMes
   plotsInterleaved1 <-
-    zipWithM (\c cascNum -> hammingCode (stdInterleaver (cascNum*round(7/4)*7) (cascNum*round(7/4)*7)) (Inbuild $ Guilbert 0.3 0.9 0.001)
+    zipWithM (\c cascNum -> hammingCode (stdInterleaver (cascNum*round(7/4)*7) (cascNum*round(7/4)*7)) (Inbuild $ Guilbert 0.1 0.1 0.001)
       False c inputMes 7 4 cascNum)
         (replicate 4 B) [1]
 
   let plotlls = concat . zipWith3 (\num p1 p2  ->
             [ChartParamsDouble [p1, p2]
-              ("Эффективность перемежителя для каскада из " ++ show num ++ " кода/ов Хэмминга 7 4")
-              (Linear, "Доля слов переданных с ошибкой в канале без защиты от ошибок") (Linear, "Доля слов переданных с ошибкой в канале с защитой от ошибок"),
-            ChartParamsDouble [p1, p2]
-              ("Эффективность перемежителя для каскада из " ++ show num ++ " кода/ов Хэмминга 7 4")
-              (Logarithmic, "Доля слов переданных с ошибкой в канале без защиты от ошибок") (Linear, "Доля слов переданных с ошибкой в канале с защитой от ошибок"),
-            ChartParamsDouble [p1, p2]
-              ("Эффективность перемежителя для каскада из " ++ show num ++ " кода/ов Хэмминга 7 4")
-              (Logarithmic, "Доля слов переданных с ошибкой в канале без защиты от ошибок") (Logarithmic, "Доля слов переданных с ошибкой в канале с защитой от ошибок"),
-            ChartParamsDouble [p1, p2]
-              ("Эффективность перемежителя для каскада из " ++ show num ++ " кода/ов Хэмминга 7 4")
-              (Linear, "Доля слов переданных с ошибкой в канале без защиты от ошибок") (Logarithmic, "Доля слов переданных с ошибкой в канале с защитой от ошибок")
+              ("Эффективность перемежителя для каскада из кода Хэмминга 7 4 в канале с Гильбертовой моделью ошибок")
+              (Linear, "Доля слов переданных с ошибкой в канале без защиты от ошибок") (Linear, "Доля слов переданных с ошибкой в канале с защитой от ошибок")
             ]) [1,2] plotsUnInterleaved $ plotsInterleaved1
 
   zipWithM_ (\n p -> makeChartA p PNG >> chartOutAsJSONA p (show n)) [1,2..]  plotlls

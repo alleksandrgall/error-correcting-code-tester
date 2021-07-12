@@ -29,12 +29,15 @@ evenErrors mes p = do
       randomError _ [] word = word
   return mes'
 
+
 evenErrorsBool :: [Bool] -> Double -> IO [Bool]
 evenErrorsBool mes p = do
   g <- getStdGen
   let (p' :: Float) = realToFrac p
       rs = randomRs (0 :: Float, 1 :: Float) g
   evaluate $ zipWith (\b r -> b /= (r < p')) mes rs
+
+{-# INLINABLE evenErrorsBool #-}
 
 guilbertBool :: [Bool] -> Double -> Double -> Double -> IO [Bool]
 guilbertBool mes p q pp = do
@@ -51,6 +54,8 @@ guilbertBool mes p q pp = do
         in ((newSt, gen'), (b:acc))
       ) ((False, g), []) $ mes
 
+{-# INLINABLE guilbertBool #-}
+
 burstErrorsBool :: (Int, Int) -> [Bool] -> Double -> IO [Bool]
 burstErrorsBool (lowerBound, higherBound) mes p = do
   g <- getStdGen
@@ -61,6 +66,8 @@ burstErrorsBool (lowerBound, higherBound) mes p = do
   evaluate $ force . reverse . fst . foldl' (\(acc, (i, gen)) (r, b) -> if i > 0 then (not b:acc, (i - 1, gen)) else
     if r > burstRate then (b : acc, (i, gen)) else
       let (newI ,newGen) = randomR (lowerBound, higherBound) gen in ( not b : acc, (newI - 1, newGen))) ([], (0, g)) $ (zip rs mes)
+
+{-# INLINABLE burstErrorsBool#-}
 
 burstErrors :: (Int, Int) -> ByteString -> Double -> IO ByteString
 burstErrors (lowerBound, higherBound) mes p = do

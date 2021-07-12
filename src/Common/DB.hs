@@ -16,7 +16,7 @@ Message
   type String
   path String
 Experiment
-  experimentName String
+  name String
   messageId MessageId
   logFilePath String
   timeOfExp UTCTime default=CURRENT_TIME
@@ -59,9 +59,7 @@ Channel
   coderDecoderId CoderDecoderId
 ChannelExperiment
   channelId ChannelId
-  coderRuntimeSecs Double
-  decoderRuntimeSecs Double
-  noiseRuntimeSecs Double
+  name String
   errorRateBit Double
   errorRateWord Double
   experimentId ExperimentId
